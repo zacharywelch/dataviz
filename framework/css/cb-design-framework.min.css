@@ -200,7 +200,7 @@ table{border-collapse:collapse;border-spacing:0}
 .icon-cloud-upload:before{content:"\e198"}
 .icon-tree-conifer:before{content:"\e199"}
 .icon-tree-deciduous:before{content:"\e200"}
-@font-face{font-family:'CB Icons';src:url('../fonts/icons/icomoon.eot');src:url('../fonts/icons/icomoon.eot?#iefix') format('embedded-opentype'),url('../fonts/icons/icomoon.woff') format('woff'),url('../fonts/icons/icomoon.ttf') format('truetype'),url('../fonts/icons/icomoon.svg#icomoon') format('svg');font-weight:normal;font-style:normal}.icon-asc,.icon-desc,.icon-ok-sign,.icon-ok,.icon-list,.icon-remove,.icon-calendar,.icon-folder,.icon-remove-sign,.icon-plus-sign,.icon-customer,.icon-bill,.icon-journal,.icon-inbox-alt,.icon-inbox,.icon-briefcase{font-family:'CB Icons';top:0;vertical-align:baseline}
+@font-face{font-family:'CB Icons';src:url('../fonts/icons/icomoon.eot');src:url('../fonts/icons/icomoon.eot?#iefix') format('embedded-opentype'),url('../fonts/icons/icomoon.woff') format('woff'),url('../fonts/icons/icomoon.ttf') format('truetype'),url('../fonts/icons/icomoon.svg#icomoon') format('svg');font-weight:normal;font-style:normal}.icon-asc,.icon-desc,.icon-ok-sign,.icon-ok,.icon-list,.icon-remove,.icon-calendar,.icon-folder,.icon-remove-sign,.icon-plus-sign,.icon-customer,.icon-bill,.icon-journal,.icon-clipboard,.icon-inbox-alt,.icon-inbox,.icon-briefcase{font-family:'CB Icons';top:0;vertical-align:baseline}
 .icon-asc:before{content:"\e000"}
 .icon-desc:before{content:"\e004"}
 .icon-ok-sign:before{content:"\e007"}
@@ -214,6 +214,7 @@ table{border-collapse:collapse;border-spacing:0}
 .icon-customer:before{content:"\e600"}
 .icon-bill:before{content:"\e601"}
 .icon-journal:before{content:"\e602"}
+.icon-clipboard:before{content:"\e603"}
 .icon-inbox-alt:before{content:"\e607"}
 .icon-inbox:before{content:"\e608"}
 .icon-briefcase:before{content:"\e609"}
@@ -280,18 +281,10 @@ h3.fancy{font-size:26px;letter-spacing:2px;line-height:40px}
 .text-right{text-align:right}
 .text-center,.center{text-align:center}
 .text-justify{text-align:justify}
-.text-muted,.quiet{color:#7f7f7f}
-.text-primary{color:#3887be}a.text-primary:hover{color:#2c6b97}
-.text-success,.success{color:#56b881}a.text-success:hover,a.success:hover{color:#419a68}
-.text-info{color:#31708f}a.text-info:hover{color:#245269}
-.text-warning{color:#8a6d3b}a.text-warning:hover{color:#66512c}
-.text-danger,.danger{color:#ee6565}a.text-danger:hover,a.danger:hover{color:#e93737}
+.quiet{color:#7f7f7f}
+.success{color:#56b881}a.success:hover{color:#419a68}
+.danger{color:#ee6565}a.danger:hover{color:#e93737}
 .dark .quiet{color:#7f7f7f;color:rgba(255,255,255,0.5)}
-.bg-primary{color:#fff;background-color:#3887be}a.bg-primary:hover{background-color:#2c6b97}
-.bg-success{background-color:#dff0d8}a.bg-success:hover{background-color:#c1e2b3}
-.bg-info{background-color:#d9edf7}a.bg-info:hover{background-color:#afd9ee}
-.bg-warning{background-color:#fcf8e3}a.bg-warning:hover{background-color:#f7ecb5}
-.bg-danger{background-color:#f2dede}a.bg-danger:hover{background-color:#e4b9b9}
 .fill-dark{background:#404040}
 .fill-gray{background:#eee}
 .fill-white{background:#fff}
@@ -317,12 +310,6 @@ h3.fancy{font-size:26px;letter-spacing:2px;line-height:40px}
 sup,sub{height:0;line-height:1;vertical-align:baseline;_vertical-align:bottom;position:relative;font-size:75%}
 sup{bottom:1ex}
 sub{top:.5ex}
-h1 a[href^='#'],h2 a[href^='#'],.doc h1[id],.doc h2[id],.doc h3[id],.doc h4[id]{cursor:pointer;color:rgba(0,0,0,0.75)}
-h1 a[href^='#']:after,h2 a[href^='#']:after,.doc h1[id]:after,.doc h2[id]:after,.doc h3[id]:after,.doc h4[id]:after{font-family:'Glyphicons Halflings';content:"\e142";color:rgba(0,0,0,0.75);float:left;margin:0 0 0 -20px;width:20px;height:20px;opacity:0;filter:alpha(opacity=0);border-radius:50%;text-indent:-9999px}
-.doc h1[id]:after{margin-top:10px}
-.doc h2[id]:after{margin-top:5px}
-h1 a[href^='#']:hover:after,h2 a[href^='#']:hover:after,.doc h1[id]:hover:after,.doc h2[id]:hover:after,.doc h3[id]:hover:after,.doc h4[id]:hover:after{opacity:0.1}
-.dark h1 a[href^='#'],.dark h2 a[href^='#'],h1 .dark>a[href^='#'],h2 .dark>a[href^='#']{color:white}
 abbr{border-bottom:1px dotted #000;cursor:help}
 blockquote,q{quotes:none;font-style:normal;padding-left:20px;margin:10px}
 blockquote:before,blockquote:after,q:before,q:after{content:''}
@@ -446,9 +433,6 @@ textarea.stretch,input.stretch[type=text],input.stretch[type=email],input.stretc
 textarea{height:80px;max-width:none;overflow:auto;resize:none}
 textarea.resize{resize:both}
 select{border-radius:3px;font:15px / 18px 'Open Sans',sans-serif;-webkit-font-smoothing:antialiased;cursor:pointer;padding-right:40px;-moz-appearance:none;text-indent:0.01px;text-overflow:''}select+.icon{position:absolute;right:20px;top:15px}
-fieldset.with-icon{position:relative}fieldset.with-icon input[type=text],fieldset.with-icon input[type=email],fieldset.with-icon input[type=number]{padding-left:35px}fieldset.with-icon input[type=text].short,fieldset.with-icon input[type=email].short,fieldset.with-icon input[type=number].short{padding-left:30px;font-size:12px}
-fieldset.with-icon>.icon,fieldset.with-icon .input-group>.icon{position:absolute;top:50%;left:10px;margin-top:-10px;line-height:20px;z-index:1}
-fieldset.with-icon .icon.clear{left:initial;right:12px;cursor:pointer}
 .checkbox input[type=checkbox]{display:none}.checkbox input[type=checkbox]:checked+label{background:rgba(0,0,0,0.05)}
 .checkbox input[type=checkbox]:not(:checked)+.icon:before{color:transparent}
 .checkbox label{cursor:pointer;padding:10px;margin:0}.checkbox label:hover{background:rgba(0,0,0,0.025)}
@@ -480,9 +464,6 @@ fieldset.with-icon .icon.clear{left:initial;right:12px;cursor:pointer}
 .btn-danger{color:#fff;background-color:#ee6565}.btn-danger:hover,.btn-danger:active,.btn-danger.active,.open>.dropdown-toggle.btn-danger{color:#fff;background-color:#eb4e4e}
 .btn-danger:active,.btn-danger.active,.open>.dropdown-toggle.btn-danger{background-image:none}
 .btn-danger .badge{color:#ee6565;background-color:#fff}
-.btn-inverse{color:#fff;background-color:#3c4e5a}.btn-inverse:hover,.btn-inverse:active,.btn-inverse.active,.open>.dropdown-toggle.btn-inverse{color:#fff;background-color:#3a5669}
-.btn-inverse:active,.btn-inverse.active,.open>.dropdown-toggle.btn-inverse{background-image:none}
-.btn-inverse .badge{color:#3c4e5a;background-color:#fff}
 .dark .btn,.dark .btn:hover,.dark .quiet.btn,.dark .quiet.btn:hover,.dark [type=button]:hover,.dark [type=submit]:hover{color:white}
 .dark .btn-default,.dark .btn-default[type=submit],.dark .btn-default[type=button]{color:#fff;background-color:rgba(255,255,255,0.1)}
 .dark .btn-default.active,.dark .btn-default:hover,.dark .btn-default[type=submit]:hover,.dark .btn-default[type=button]:hover{background-color:rgba(255,255,255,0.25)}
@@ -581,7 +562,7 @@ tbody.collapse.in{display:table-row-group}
 .input-group>input[type='text'],.input-group>.form-control{display:table-cell;width:100%}.input-group>input[type='text'],.input-group>.form-control,.input-group>input[type='text']:focus,.input-group>.form-control:focus{border-right-width:0}
 .input-group>input[type='text']+.btn,.input-group>.form-control+.btn,.input-group>input[type='text']+.input-group-btn>.btn,.input-group>.form-control+.input-group-btn>.btn{border-left-width:0;border-radius:0 3px 3px 0}
 .input-group>input[type='text']+.input-group-btn>.btn+.dropdown-toggle,.input-group>.form-control+.input-group-btn>.btn+.dropdown-toggle{border-left-width:1px}
-fieldset.with-icon{position:relative}fieldset.with-icon input[type=text],fieldset.with-icon input[type=email],fieldset.with-icon input[type=number]{padding-left:35px}fieldset.with-icon input[type=text].short,fieldset.with-icon input[type=email].short,fieldset.with-icon input[type=number].short{padding-left:30px;font-size:12px}
+fieldset.with-icon{position:relative}fieldset.with-icon>input[type=text],fieldset.with-icon>.input-group>input[type=text],fieldset.with-icon>input[type=email],fieldset.with-icon>.input-group>input[type=email],fieldset.with-icon>input[type=number],fieldset.with-icon>.input-group>input[type=number]{padding-left:35px}fieldset.with-icon>input[type=text].short,fieldset.with-icon>.input-group>input[type=text].short,fieldset.with-icon>input[type=email].short,fieldset.with-icon>.input-group>input[type=email].short,fieldset.with-icon>input[type=number].short,fieldset.with-icon>.input-group>input[type=number].short{padding-left:30px;font-size:12px}
 fieldset.with-icon>.icon,fieldset.with-icon .input-group>.icon{position:absolute;top:50%;left:10px;margin-top:-10px;line-height:20px;z-index:1}
 fieldset.with-icon .icon.clear{left:initial;right:12px;cursor:pointer}
 .tabs>.btn{border:1px solid rgba(0,0,0,0.25);border-left-width:0px;background:transparent;color:rgba(0,0,0,0.5)}.tabs>.btn:first-child{border-left-width:1px}

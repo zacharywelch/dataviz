@@ -813,6 +813,7 @@ table {
 .icon-customer,
 .icon-bill,
 .icon-journal,
+.icon-clipboard,
 .icon-inbox-alt,
 .icon-inbox,
 .icon-briefcase {
@@ -859,6 +860,9 @@ table {
 }
 .icon-journal:before {
   content: "\e602";
+}
+.icon-clipboard:before {
+  content: "\e603";
 }
 .icon-inbox-alt:before {
   content: "\e607";
@@ -1223,78 +1227,24 @@ h3.fancy {
 .text-justify {
   text-align: justify;
 }
-.text-muted,
 .quiet {
   color: #7f7f7f;
 }
-.text-primary {
-  color: #3887be;
-}
-a.text-primary:hover {
-  color: #2c6b97;
-}
-.text-success,
 .success {
   color: #56b881;
 }
-a.text-success:hover,
 a.success:hover {
   color: #419a68;
 }
-.text-info {
-  color: #31708f;
-}
-a.text-info:hover {
-  color: #245269;
-}
-.text-warning {
-  color: #8a6d3b;
-}
-a.text-warning:hover {
-  color: #66512c;
-}
-.text-danger,
 .danger {
   color: #ee6565;
 }
-a.text-danger:hover,
 a.danger:hover {
   color: #e93737;
 }
 .dark .quiet {
   color: #7f7f7f;
   color: rgba(255, 255, 255, 0.5);
-}
-.bg-primary {
-  color: #fff;
-  background-color: #3887be;
-}
-a.bg-primary:hover {
-  background-color: #2c6b97;
-}
-.bg-success {
-  background-color: #dff0d8;
-}
-a.bg-success:hover {
-  background-color: #c1e2b3;
-}
-.bg-info {
-  background-color: #d9edf7;
-}
-a.bg-info:hover {
-  background-color: #afd9ee;
-}
-.bg-warning {
-  background-color: #fcf8e3;
-}
-a.bg-warning:hover {
-  background-color: #f7ecb5;
-}
-.bg-danger {
-  background-color: #f2dede;
-}
-a.bg-danger:hover {
-  background-color: #e4b9b9;
 }
 /* Fills */
 .fill-dark {
@@ -1379,54 +1329,6 @@ sup {
 }
 sub {
   top: .5ex;
-}
-/* Doc Headings */
-h1 a[href^='#'],
-h2 a[href^='#'],
-.doc h1[id],
-.doc h2[id],
-.doc h3[id],
-.doc h4[id] {
-  cursor: pointer;
-  color: rgba(0, 0, 0, 0.75);
-}
-h1 a[href^='#']:after,
-h2 a[href^='#']:after,
-.doc h1[id]:after,
-.doc h2[id]:after,
-.doc h3[id]:after,
-.doc h4[id]:after {
-  font-family: 'Glyphicons Halflings';
-  content: "\e142";
-  color: rgba(0, 0, 0, 0.75);
-  float: left;
-  margin: 0 0 0 -20px;
-  width: 20px;
-  height: 20px;
-  opacity: 0;
-  filter: alpha(opacity=0);
-  border-radius: 50%;
-  text-indent: -9999px;
-}
-.doc h1[id]:after {
-  margin-top: 10px;
-}
-.doc h2[id]:after {
-  margin-top: 5px;
-}
-h1 a[href^='#']:hover:after,
-h2 a[href^='#']:hover:after,
-.doc h1[id]:hover:after,
-.doc h2[id]:hover:after,
-.doc h3[id]:hover:after,
-.doc h4[id]:hover:after {
-  opacity: 0.1;
-}
-.dark h1 a[href^='#'],
-.dark h2 a[href^='#'],
-h1 .dark > a[href^='#'],
-h2 .dark > a[href^='#'] {
-  color: white;
 }
 /* Abbreviations */
 abbr {
@@ -2585,34 +2487,6 @@ select + .icon {
   right: 20px;
   top: 15px;
 }
-fieldset.with-icon {
-  position: relative;
-}
-fieldset.with-icon input[type=text],
-fieldset.with-icon input[type=email],
-fieldset.with-icon input[type=number] {
-  padding-left: 35px;
-}
-fieldset.with-icon input[type=text].short,
-fieldset.with-icon input[type=email].short,
-fieldset.with-icon input[type=number].short {
-  padding-left: 30px;
-  font-size: 12px;
-}
-fieldset.with-icon > .icon,
-fieldset.with-icon .input-group > .icon {
-  position: absolute;
-  top: 50%;
-  left: 10px;
-  margin-top: -10px;
-  line-height: 20px;
-  z-index: 1;
-}
-fieldset.with-icon .icon.clear {
-  left: initial;
-  right: 12px;
-  cursor: pointer;
-}
 /* Checkboxes
 ------------------------------------------------------- */
 .checkbox input[type=checkbox] {
@@ -2900,26 +2774,6 @@ fieldset[disabled] .btn-sm:focus {
 }
 .btn-danger .badge {
   color: #ee6565;
-  background-color: #ffffff;
-}
-.btn-inverse {
-  color: #ffffff;
-  background-color: #3c4e5a;
-}
-.btn-inverse:hover,
-.btn-inverse:active,
-.btn-inverse.active,
-.open > .dropdown-toggle.btn-inverse {
-  color: #ffffff;
-  background-color: #3a5669;
-}
-.btn-inverse:active,
-.btn-inverse.active,
-.open > .dropdown-toggle.btn-inverse {
-  background-image: none;
-}
-.btn-inverse .badge {
-  color: #3c4e5a;
   background-color: #ffffff;
 }
 /* Dark Buttons */
@@ -3679,14 +3533,20 @@ tbody.collapse.in {
 fieldset.with-icon {
   position: relative;
 }
-fieldset.with-icon input[type=text],
-fieldset.with-icon input[type=email],
-fieldset.with-icon input[type=number] {
+fieldset.with-icon > input[type=text],
+fieldset.with-icon > .input-group > input[type=text],
+fieldset.with-icon > input[type=email],
+fieldset.with-icon > .input-group > input[type=email],
+fieldset.with-icon > input[type=number],
+fieldset.with-icon > .input-group > input[type=number] {
   padding-left: 35px;
 }
-fieldset.with-icon input[type=text].short,
-fieldset.with-icon input[type=email].short,
-fieldset.with-icon input[type=number].short {
+fieldset.with-icon > input[type=text].short,
+fieldset.with-icon > .input-group > input[type=text].short,
+fieldset.with-icon > input[type=email].short,
+fieldset.with-icon > .input-group > input[type=email].short,
+fieldset.with-icon > input[type=number].short,
+fieldset.with-icon > .input-group > input[type=number].short {
   padding-left: 30px;
   font-size: 12px;
 }
