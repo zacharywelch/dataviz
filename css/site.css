@@ -1,0 +1,86 @@
+body { padding-top: 60px; }
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10000;  
+}
+
+.sidenav {
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  width: 100%;  
+}
+
+.sidenav .container-fluid,
+.sidenav .col-sm-3 { height: 100%; }
+
+.sidenav nav {
+  position: absolute;
+  left: 0;
+  top: 20px;
+  right: 20px;
+  bottom: 20px;
+}
+
+.scroll-styled .highlight pre, .scroll-styled { overflow: auto; }
+
+.quiet-scroll pre::-webkit-scrollbar-track, 
+.quiet-scroll::-webkit-scrollbar-track {
+  background: none;
+}
+
+.quiet-scroll pre::-webkit-scrollbar-thumb, 
+.quiet-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.4);
+  border-radius: 0;
+}
+
+.quiet-scroll pre::-webkit-scrollbar, 
+.quiet-scroll::-webkit-scrollbar {
+  width: 1px;
+  height: 1px;
+  border-left: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+@media (max-width:767px) {
+  body.fill-light { background: #fff; }
+  .sidenav + .container-fluid { padding: 0; }
+  .sidenav + .container-fluid > .pad2y { padding: 0; }
+  .sidenav + .container-fluid .box { border: none; }
+}
+
+
+/* Visualization styles */
+
+.counties {
+  fill: none;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.q0-9 { fill:rgb(247,251,255); }
+.q1-9 { fill:rgb(222,235,247); }
+.q2-9 { fill:rgb(198,219,239); }
+.q3-9 { fill:rgb(158,202,225); }
+.q4-9 { fill:rgb(107,174,214); }
+.q5-9 { fill:rgb(66,146,198); }
+.q6-9 { fill:rgb(33,113,181); }
+.q7-9 { fill:rgb(8,81,156); }
+.q8-9 { fill:rgb(8,48,107); }
+
+.prettyprint {
+  background: #fff;
+  border: none;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  border-radius: 0;
+  padding: 10px;
+}
