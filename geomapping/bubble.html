@@ -4,7 +4,7 @@
   <meta charset='UTF-8'/>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
-  <title>US counties</title>
+  <title>Data Visualization</title>
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
@@ -40,12 +40,12 @@
             <div class='space-bottom1'>
               <strong class='block quiet small'>Geomapping</strong>
               <a href='simple.html' class='block small truncate'>A simple map</a>
-              <a href='counties.html' class='block small truncate active'>US counties TopoJSON</a>
+              <a href='counties.html' class='block small truncate'>US counties TopoJSON</a>
               <a href='zoom.html' class='block small truncate'>Click to zoom</a>
               <a href='zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
               <a href='choropleth.html' class='block small truncate'>Creating a choropleth</a>
               <a href='tooltip.html' class='block small truncate'>Adding tooltips on hover</a>
-              <a href='bubble.html' class='block small truncate'>Creating a bubble map</a>
+              <a href='bubble.html' class='block small truncate active'>Creating a bubble map</a>
             </div>
 
             <div class='space-bottom1'>
@@ -81,9 +81,9 @@
         <div class='col-sm-12 box round clearfix contain fill-white'>
 
           <div class='pad2 keyline-bottom'>
-            <h4>US Counties TopoJSON</h4>
+            <h4>Creating a bubble map</h4>
             <p class='prose'>
-              TopoJSON can be used to show US counties as well as <a href='simple.html'>states</a>.
+              This example uses bubbles to represent total popuplation in the top 50 cities. Cities are represented as SVG circles with area set by population. Estimates are based on <a href='https://www.census.gov/popest/data/cities/totals/2012/SUB-EST2012-3.html'>US Census Bureau data</a>.  
             </p>
           </div>
           <div id='map' class='center'></div>
@@ -93,6 +93,7 @@
 &lt;html&gt;
 &lt;head&gt;
 &lt;meta charset='UTF-8'/&gt;
+&lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
 &lt;style&gt;
   .outline {
     fill: #bfbfbf;
@@ -102,9 +103,9 @@
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
 &lt;div id='map'&gt;&lt;/div&gt;
 &lt;script src='http://d3js.org/d3.v3.min.js'&gt;&lt;/script&gt;
+&lt;script src='http://d3js.org/queue.v1.min.js'&gt;&lt;/script&gt;
 &lt;script src='http://d3js.org/topojson.v1.min.js'&gt;&lt;/script&gt;
 &lt;script&gt;
   // define width and height of map
@@ -119,25 +120,51 @@
   // tell path to use our defined projection
   var path = d3.geo.path().projection(projection)
 
+  // create svg up front
+  var svg = d3.select('#map')
+              .append('svg')
+              .attr('width', w)
+              .attr('height', h)
+              .attr('class', 'outline')
+
+  // group states 
+  var g = svg.append('g')
+
   // load TopoJSON data 
   d3.json('/data/geomapping/us.json', function(error, us) {
-    d3.select('#map')
-      .append('svg')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('class', 'outline')
-      .append('path')
-      .datum(topojson.feature(us, us.objects.counties))
-      .attr('d', path)
+    g.selectAll('path')
+     .data(topojson.feature(us, us.objects.states).features)
+     .enter()
+     .append('path')
+     .attr('d', path)
+
+    // overlay data for top 50 cities
+    d3.csv('/data/geomapping/us-cities.csv', function(data) {
+      svg.selectAll('circle')
+         .data(data)
+         .enter()
+         .append('circle')
+         .attr('cx', function(d) {
+           return projection([d.lon, d.lat])[0];
+         })
+         .attr('cy', function(d) {
+           return projection([d.lon, d.lat])[1];
+         })
+         .attr('r', function(d) {
+          return Math.sqrt(parseInt(d.population) * 0.00004);
+         })
+         .style('fill', '#3887be')
+         .style('stroke', 'none')
+         .style('opacity', 0.8)
+    });
+
   });
 &lt;/script&gt;
-
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-          
-          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' 
-                  data-ref-id='code'>
+
+          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' data-ref-id='code'>
             <i class='icon icon-clipboard pad0r'></i>Copy example
           </button>
         </div>
@@ -147,13 +174,14 @@
     </div>
 
   </div><!-- ./content -->
-  
+
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
   <script src='http://d3js.org/d3.v3.min.js'></script>
+  <script src='http://d3js.org/queue.v1.min.js'></script>
   <script src='http://d3js.org/topojson.v1.min.js'></script>
   <script src='../js/prettify.js'></script>
   <script src='../js/zeroclipboard/ZeroClipboard.min.js'></script>
   <script src='../js/site.js'></script>
-  <script src='../js/geomapping/counties.js'></script>
+  <script src='../js/geomapping/bubble.js'></script>
 </body>
 </html>

@@ -31,7 +31,7 @@
 </section>
 
 <section>
-  <p id='follow' style='position:fixed;text-indent:-1.25em;'>&larr; When this bar reaches the top,<br>the next slide will fade in.
+  We're experiencing an explosion of online mapping.
 </section>
 
 <section style='padding:5em 9em;'>
@@ -51,23 +51,6 @@
 <script>
 
 var mystack = stack()
-    .on('activate', activate)
-    .on('deactivate', deactivate);
-
-var follow = d3.select('#follow');
-
-function refollow() {
-  follow.style('top', (1 + (1 - mystack.scrollRatio()) / 2 - d3.event.offset) * 100 + '%');
-}
-
-function activate(d, i) {
-  if (i === 1) mystack.on('scroll.follow', refollow);
-}
-
-function deactivate(d, i) {
-  if (i === 1) mystack.on('scroll.follow', null);
-}
-
 </script>
 
 </body>

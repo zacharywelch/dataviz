@@ -74,7 +74,6 @@
   function reset() {
     active.classed('active', false)
     active = d3.select(null) 
-    g.style('stroke-width', '1px')
     svg.transition()
        .duration(750)
        .call(zoom.translate([0, 0]).scale(1).event)
@@ -83,7 +82,7 @@
   // Zoom to state using transition and scale
   function zoomed() {
     g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')')
-     .style('stroke-width', 1.5 / d3.event.scale + 'px')
+     .style('stroke-width', 1 / d3.event.scale + 'px')
   }
 
   // If the drag behavior prevents the default click,
