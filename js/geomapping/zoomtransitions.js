@@ -40,6 +40,7 @@
   svg.call(zoom) // enable zoom on mouse and touch
      .call(zoom.event)
 
+  // load TopoJSON data 
   d3.json('/data/geomapping/us.json', function(error, us) {
     g.selectAll('path')
      .data(topojson.feature(us, us.objects.states).features)
@@ -72,18 +73,17 @@
   // Reset scale and zoom on map
   function reset() {
     active.classed('active', false)
-    active = d3.select(null)
-
+    active = d3.select(null) 
+    g.style('stroke-width', '1px')
     svg.transition()
-        .duration(750)
-        .call(zoom.translate([0, 0]).scale(1).event)
+       .duration(750)
+       .call(zoom.translate([0, 0]).scale(1).event)
   }
 
   // Zoom to state using transition and scale
   function zoomed() {
-    // lighten outline of states on zoom
-    g.style('stroke-width', 1.5 / d3.event.scale + 'px')
     g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')')
+     .style('stroke-width', 1.5 / d3.event.scale + 'px')
   }
 
   // If the drag behavior prevents the default click,

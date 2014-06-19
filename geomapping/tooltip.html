@@ -4,10 +4,18 @@
   <meta charset='UTF-8'/>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
-  <title>Zoom transitions</title>
+  <title>Data Visualization</title>
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
+  <style>
+    #tooltip {
+      position: absolute;
+      width: 200px;
+      height: auto;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body class='fill-light requests'>
   <div class='navbar fill-white keyline-bottom col-sm-12 animate clearfix'>
@@ -42,9 +50,9 @@
               <a href='simple.html' class='block small truncate'>A simple map</a>
               <a href='counties.html' class='block small truncate'>US counties TopoJSON</a>
               <a href='zoom.html' class='block small truncate'>Click to zoom</a>
-              <a href='zoomtransitions.html' class='block small truncate active'>Zoom transitions with panning</a>
+              <a href='zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
               <a href='choropleth.html' class='block small truncate'>Creating a choropleth</a>
-              <a href='tooltips.html' class='block small truncate'>Adding tooltips on hover</a>
+              <a href='tooltips.html' class='block small truncate active'>Adding tooltips on hover</a>
             </div>
 
             <div class='space-bottom1'>
@@ -80,9 +88,9 @@
         <div class='col-sm-12 box round clearfix contain fill-white'>
 
           <div class='pad2 keyline-bottom'>
-            <h4>Zoom transitions with panning</h4>
+            <h4>Adding tooltips on hover</h4>
             <p class='prose'>
-              This example builds on <a href='zoom.html'>zoom</a> to demonstrate how to compute a suitable translate and scale for zooming to the bounding box of a particular state. <a href='http://bl.ocks.org/mbostock/6238040'>Zoom transitions</a> are used to smoothly interpolate between different views. It also shows how to add panning and zoom for <em>mouse</em> and <em>touch</em>.
+              This example shows how to create HTML tooltips on hover and touch. The tooltip is data-driven and displays the <a href='http://en.wikipedia.org/wiki/Federal_Information_Processing_Standards'>FIPS</a> code of the current state.
             </p>
           </div>
           <div id='map' class='center'></div>
@@ -92,124 +100,84 @@
 &lt;html&gt;
 &lt;head&gt;
 &lt;meta charset='UTF-8'/&gt;
+&lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
 &lt;style&gt;
   .outline {
     fill: #bfbfbf;
     stroke: #fff;
     stroke-linejoin: round;
   }
-  .zoom {
-    fill: none;
-    pointer-events: all;
+  #tooltip {
+    position: absolute;
+    width: 200px;
+    height: auto;
+    pointer-events: none;
   }
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
 &lt;div id='map'&gt;&lt;/div&gt;
+&lt;div id='tooltip' class='fill-denim dark keyline-all small pad2 hidden'&gt;
+  &lt;h4&gt;A simple tooltip&lt;/h4&gt;
+  &lt;strong&gt;FIPS code&lt;/strong&gt; &lt;val&gt;n/a&lt;/val&gt;
+&lt;/div&gt;
 &lt;script src='http://d3js.org/d3.v3.min.js'&gt;&lt;/script&gt;
+&lt;script src='http://d3js.org/queue.v1.min.js'&gt;&lt;/script&gt;
 &lt;script src='http://d3js.org/topojson.v1.min.js'&gt;&lt;/script&gt;
 &lt;script&gt;
   // define width and height of map
-  var w      = 500
-  var h      = 300
-  var active = d3.select(null)
-
+  var w = 500
+  var h = 300
+  
   // define albers usa projection
   var projection = d3.geo.albersUsa()
                      .translate([w/2, h/2])
                      .scale(500)
-
+  
   // tell path to use our defined projection
   var path = d3.geo.path().projection(projection)
 
-  // define zoom behavior
-  var zoom = d3.behavior.zoom()
-               .translate([0, 0])
-               .scale(1)
-               .scaleExtent([1, 8])
-               .on('zoom', zoomed)
-
-  // create svg up front
-  var svg = d3.select('#map')
-              .append('svg')
-              .attr('width', w)
-              .attr('height', h)
-              .attr('class', 'outline')
-              .on('click', stopped, true)
-
-  // create overlay that listens to click events
-  svg.append('rect')
-     .attr('width', w)
-     .attr('height', h)
-     .attr('class', 'zoom')
-     .on('click', reset)
-
-  // group states 
-  var g = svg.append('g')
-
-  svg.call(zoom) // enable zoom on mouse and touch
-     .call(zoom.event)
-
+  // grab tooltip
+  var tooltip = d3.select('#tooltip')
+  
   // load TopoJSON data 
   d3.json('/data/geomapping/us.json', function(error, us) {
-    g.selectAll('path')
-     .data(topojson.feature(us, us.objects.states).features)
-     .enter()
-     .append('path')
-     .attr('d', path)
-     .on('click', clicked)
+    d3.select('#map')
+      .append('svg')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('class', 'outline')
+      .selectAll('path')
+      .data(topojson.feature(us, us.objects.states).features)
+      .enter().append('path')
+      .attr('d', path)
+      .on('mouseover', hovered)
+      .on('mousemove', position)
+      .on('mouseout', hide)
   });
 
-  function clicked(datum) {
-    if (active.node() === this) return reset();
-    active.classed('active', false);
-    active = d3.select(this).classed('active', true);
-
-    // get center of bounding box and scale to 90%
-    var bounds = path.bounds(datum),
-        dx = bounds[1][0] - bounds[0][0],
-        dy = bounds[1][1] - bounds[0][1],
-        x = (bounds[0][0] + bounds[1][0]) / 2,
-        y = (bounds[0][1] + bounds[1][1]) / 2,
-        scale = .9 / Math.max(dx / w, dy / h),
-        translate = [w / 2 - scale * x, h / 2 - scale * y]
-
-    // zoom and scale to bounding box
-    svg.transition()
-       .duration(750)
-       .call(zoom.translate(translate).scale(scale).event)
+  // show tooltip with state FIPS code
+  function hovered(datum) {
+    tooltip.classed('hidden', false)
+           .select('val')
+           .text(datum.id)
   }
 
-  // Reset scale and zoom on map
-  function reset() {
-    active.classed('active', false)
-    active = d3.select(null) 
-    g.style('stroke-width', '1px')
-    svg.transition()
-       .duration(750)
-       .call(zoom.translate([0, 0]).scale(1).event)
+  // reposition tooltip near state
+  function position(datum) {
+    tooltip.style('top', (event.pageY-10)+'px').style('left',(event.pageX+10)+'px')
   }
 
-  // Zoom to state using transition and scale
-  function zoomed() {
-    g.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')')
-     .style('stroke-width', 1.5 / d3.event.scale + 'px')
-  }
-
-  // If the drag behavior prevents the default click,
-  // also stop propagation so we don’t click-to-zoom.
-  function stopped() {
-    if (d3.event.defaultPrevented) d3.event.stopPropagation()
+  // hide tooltip
+  function hide(datum) {
+    tooltip.classed('hidden', true)
   }
 &lt;/script&gt;
-
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-          
-          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' 
-                  data-ref-id='code'>
+
+          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' data-ref-id='code'>
             <i class='icon icon-clipboard pad0r'></i>Copy example
           </button>
         </div>
@@ -219,13 +187,19 @@
     </div>
 
   </div><!-- ./content -->
+
+  <div id='tooltip' class='fill-denim dark keyline-all small pad2 hidden'>
+    <h4>A simple tooltip</h4>
+    <strong>FIPS code</strong> <val>n/a</val>
+  </div>
   
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
   <script src='http://d3js.org/d3.v3.min.js'></script>
+  <script src='http://d3js.org/queue.v1.min.js'></script>
   <script src='http://d3js.org/topojson.v1.min.js'></script>
   <script src='../js/prettify.js'></script>
   <script src='../js/zeroclipboard/ZeroClipboard.min.js'></script>
   <script src='../js/site.js'></script>
-  <script src='../js/geomapping/zoomtransitions.js'></script>
+  <script src='../js/geomapping/tooltip.js'></script>
 </body>
 </html>

@@ -29,6 +29,7 @@
   // group states 
   var g = svg.append('g')
 
+  // load TopoJSON data 
   d3.json('/data/geomapping/us.json', function(error, us) {
     g.selectAll('path')
      .data(topojson.feature(us, us.objects.states).features)
@@ -39,28 +40,28 @@
   });
 
   function clicked(datum) {
-    var x, y, k;
+    var x, y, k
 
     if (datum && centered !== datum) {
-      var centroid = path.centroid(datum);
-      x = centroid[0];
-      y = centroid[1];
-      k = 4;
+      var centroid = path.centroid(datum)
+      x = centroid[0]
+      y = centroid[1]
+      k = 4
       centered = datum;
     } else {
-      x = w / 2;
-      y = h / 2;
-      k = 1;
-      centered = null;
+      x = w / 2
+      y = h / 2
+      k = 1
+      centered = null
     }
 
     g.selectAll('path')
-     .classed('active', centered && function(datum) { return datum === centered; });
+     .classed('active', centered && function(datum) { return datum === centered; })
 
     g.transition()
      .duration(750)
      .attr('transform', 'translate(' + w / 2 + ',' + h / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')')
-     .style('stroke-width', 1.5 / k + 'px');
+     .style('stroke-width', 1.5 / k + 'px')
   }
 
 })(jQuery);

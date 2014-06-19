@@ -1,32 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset='UTF-8'/>
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-<style>
-  .outline {
-    fill: #bfbfbf;
-    stroke: #fff;
-    stroke-linejoin: round;
-  }
-  #tooltip {
-    position: absolute;
-    width: 200px;
-    height: auto;
-    pointer-events: none;
-  }
-</style>
-</head>
-<body>
-<div id='map'></div>
-<div id='tooltip' class='fill-denim dark keyline-all small pad2 hidden'>
-  <h4>A simple tooltip</h4>
-  <strong>FIPS code</strong> <val>n/a</val>
-</div>
-<script src='http://d3js.org/d3.v3.min.js'></script>
-<script src='http://d3js.org/queue.v1.min.js'></script>
-<script src='http://d3js.org/topojson.v1.min.js'></script>
-<script>
+(function($) {
   // define width and height of map
   var w = 500
   var h = 300
@@ -74,6 +46,6 @@
   function hide(datum) {
     tooltip.classed('hidden', true)
   }
-</script>
-</body>
-</html>
+
+})(jQuery);
+
