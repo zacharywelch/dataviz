@@ -8,6 +8,28 @@
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
+  <style>
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+.feature {
+  fill: #bfbfbf;
+  cursor: pointer;
+}
+
+.feature.active {
+  fill: #FB896B;
+}
+
+.mesh {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}  
+</style>
 </head>
 <body class='fill-light requests'>
   <div class='navbar fill-white keyline-bottom col-sm-12 animate clearfix'>
@@ -81,7 +103,7 @@
           <div class='pad2 keyline-bottom'>
             <h4>Zoom transitions with panning</h4>
             <p class='prose'>
-              This example builds on <a href='zoom.html'>zoom</a> to demonstrate how to compute a suitable translate and scale to zoom to the bounding box of a particular state. <a href='http://bl.ocks.org/mbostock/6238040'>Zoom transitions</a> are used to smoothly interpolate between different views. It also shows how to add panning and zoom with mouse or touch.
+              This example builds on <a href='zoom.html'>zoom</a> to demonstrate how to compute a suitable translate and scale for zooming to the bounding box of a particular state. <a href='http://bl.ocks.org/mbostock/6238040'>Zoom transitions</a> are used to smoothly interpolate between different views. It also shows how to add panning and zoom for <em>mouse</em> and <em>touch</em>.
             </p>
           </div>
           <div id='map' class='center'></div>
@@ -152,6 +174,6 @@
   <script src='../js/prettify.js'></script>
   <script src='../js/zeroclipboard/ZeroClipboard.min.js'></script>
   <script src='../js/site.js'></script>
-  <script src='../js/geomapping/zoom.js'></script>
+  <script src='../js/geomapping/zoomtransitions.js'></script>
 </body>
 </html>

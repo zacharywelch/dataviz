@@ -60,7 +60,7 @@
     g.transition()
      .duration(750)
      .attr('transform', 'translate(' + w / 2 + ',' + h / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')')
-     .style('stroke-w', 1.5 / k + 'px');
+     .style('stroke-width', 1.5 / k + 'px');
   }
 
 })(jQuery);

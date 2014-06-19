@@ -87,6 +87,7 @@ body { padding-top: 60px; }
   fill: none;
   pointer-events: all;
 }
+.outline .zoom + g path { cursor: pointer; }
 
 /* Quantized scale */
 .q0-9 { fill:rgb(247,251,255); }
