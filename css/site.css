@@ -1,3 +1,6 @@
+/* Site styles
+------------------------------------------------------- */
+
 body { padding-top: 60px; }
 
 .navbar {
@@ -54,11 +57,15 @@ body { padding-top: 60px; }
   border: none;
   border-top: 1px solid rgba(0,0,0,0.1);
   border-radius: 0;
-  padding: 10px;
+  padding: 20px;
 }
 
 .btn.zeroclipboard-is-hover { background:#3bb2d0!important; }
 .js-clipboard:hover { cursor:pointer; }
+
+
+/* Responsive styles
+------------------------------------------------------- */
 
 @media (max-width:767px) {
   body.fill-light { background: #fff; }
@@ -70,16 +77,18 @@ body { padding-top: 60px; }
 
 /* Visualization styles */
 
-.counties {
-  fill: none;
-}
-
-.states {
-  fill: none;
+.outline { 
+  fill: #bfbfbf;
   stroke: #fff;
   stroke-linejoin: round;
 }
+.outline .active { fill: #FB896B; }
+.zoom {
+  fill: none;
+  pointer-events: all;
+}
 
+/* Quantized scale */
 .q0-9 { fill:rgb(247,251,255); }
 .q1-9 { fill:rgb(222,235,247); }
 .q2-9 { fill:rgb(198,219,239); }

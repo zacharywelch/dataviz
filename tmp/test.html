@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='UTF-8'/>
+<style>
+  .outline {
+    fill: #bfbfbf;
+    stroke: #fff;
+    stroke-linejoin: round;
+  }
+</style>
+</head>
+<body>
+
+<div id='map'></div>
+<script src='http://d3js.org/d3.v3.min.js'></script>
+<script src='http://d3js.org/topojson.v1.min.js'></script>
+<script>
+  // define width and height of map
+  var w = 500
+  var h = 300
+
+  // define albers usa projection
+  var projection = d3.geo.albersUsa()
+                     .translate([w/2, h/2])
+                     .scale(500)
+
+  // tell path to use our defined projection
+  var path = d3.geo.path().projection(projection)
+
+  // load TopoJSON data 
+  d3.json('/data/geomapping/us.json', function(error, us) {
+    d3.select('#map')
+      .append('svg')
+      .attr('width', w)
+      .attr('height', h)
+      .attr('class', 'outline')
+      .append('path')
+      .datum(topojson.feature(us, us.objects.counties))
+      .attr('d', path)
+  });
+</script>
+
+</body>
+</html>

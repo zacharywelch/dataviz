@@ -1,36 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='UTF-8'/>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <style>
-    .counties {
-      fill: none;
-    }
-
-    .states {
-      fill: none;
-      stroke: #fff;
-      stroke-linejoin: round;
-    }
-
-    .q0-9 { fill:rgb(247,251,255); }
-    .q1-9 { fill:rgb(222,235,247); }
-    .q2-9 { fill:rgb(198,219,239); }
-    .q3-9 { fill:rgb(158,202,225); }
-    .q4-9 { fill:rgb(107,174,214); }
-    .q5-9 { fill:rgb(66,146,198); }
-    .q6-9 { fill:rgb(33,113,181); }
-    .q7-9 { fill:rgb(8,81,156); }
-    .q8-9 { fill:rgb(8,48,107); }
-  </style>
-</head>
-<body>
-  <div id='map'></div>
-  <script src='http://d3js.org/d3.v3.min.js'></script>
-  <script src='http://d3js.org/queue.v1.min.js'></script>
-  <script src='http://d3js.org/topojson.v1.min.js'></script>
-  <script>
+(function() {
+  $(function() {
     //Width and height
     var width = 500;
     var height = 300;
@@ -53,8 +22,8 @@
         .attr('height', height);
 
     queue()
-        .defer(d3.json, '/data/us.json')
-        .defer(d3.tsv, '/data/unemployment.tsv', function(d) { rateById.set(d.id, +d.rate); })
+        .defer(d3.json, '/data/geomapping/us.json')
+        .defer(d3.tsv, '/data/geomapping/unemployment.tsv', function(d) { rateById.set(d.id, +d.rate); })
         .await(ready);
 
     function ready(error, us) {
@@ -73,5 +42,5 @@
     }
 
     d3.select(self.frameElement).style('height', height + 'px');  
-  </script>
-</body>
+  });
+}).call(this);

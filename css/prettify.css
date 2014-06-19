@@ -1,11 +1,14 @@
 .com { color: #93a1a1; }
-.lit { color: #195f91; }
-.pun, .opn, .clo { color: #93a1a1; }
+.lit { color: #0C9DC2; }
+.opn, .clo { color: #93a1a1; }
 .fun { color: #dc322f; }
-.str, .atv { color: #D14; }
-.kwd, .prettyprint .tag { color: #1e347b; }
-.typ, .atn, .dec, .var { color: teal; }
-.pln { color: #48484c; }
+.str, .atv { color: #75A21C; }
+.kwd, .prettyprint .tag { color: #0B5A91; }
+.typ, .var { color: teal; }
+.atn { color: #0C9DC2; }
+.pun { color: #444444;}
+.dec { color: #999; }
+.pln { color: #404040; }
 
 .prettyprint {
   padding: 8px;

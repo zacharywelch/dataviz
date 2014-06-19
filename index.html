@@ -4,186 +4,71 @@
   <meta charset='UTF-8'/>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
-  <title>Data Visualization</title>
-  <link href='css/prettify.css' rel='stylesheet' />
+  <title>CB Hackathon 2014</title>
   <link href='framework/css/cb-design-framework.min.css' rel='stylesheet' />
-  <link href='css/site.css' rel='stylesheet' />
+  <style>
+
+  @import url(http://fonts.googleapis.com/css?family=PT+Serif|PT+Serif:b|PT+Serif:i);
+
+  section {
+    background: #28353d;
+    color: #fff;
+    padding: 5em 2em;
+    font-family: 'PT Serif', Baskerville, Georgia;
+  }
+  h1 { font-size: 120%; }
+  .small { font-size: 80%; }
+  .micro { font-size: 65%; }
+  </style>
 </head>
-<body class='fill-light requests'>
-  <div class='navbar fill-white keyline-bottom col-sm-12 animate clearfix'>
-    <div class='container-fluid contain'>
-      <nav class='col-sm-12 text-right pad1y contain clearfix noprint'>
-        <a class='logo pad1y pull-left text-left' href='index.html'>
-          CB Hackathon 2014
-        </a>
+<body>
 
-        <div class='primary row2'>
-          <a href='#dropdown' class='visible-xs authmenu keyline-all droplink 
-            quiet round animate pull-right center'>
-            <i class='icon icon-list'></i>
-          </a>
-        </div>
-      </nav>
-    </div>
-  </div><!-- ./navbar -->
+<section class='center prose'>
+  <h1>
+    Data Journalism <span class='quiet'>&amp;</span> D3.js
+  </h1>
+  <p class='quiet'>Scroll down to continue.
+</section>
 
-  <div>
-    
-    <div class='sidenav hidden-xs'>
-      <div class='container-fluid'>
-        <div class='col-sm-3 contain'>
-          <nav class='scroll-styled quiet-scroll'>
-            <div class='space-bottom'>
-              <a class='block quiet active strong small truncate' href='#fakelink'>Examples</a>
-            </div>
+<section>
+  <p id='follow' style='position:fixed;text-indent:-1.25em;'>&larr; When this bar reaches the top,<br>the next slide will fade in.
+</section>
 
-            <div class='space-bottom1'>
-              <strong class='block quiet small'>Choropleths</strong>
-              <a href='#fakelink' class='block small truncate active'>A simple choropleth</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-            </div>            
+<section style='padding:5em 9em;'>
+  <p>
+    In addition to the mouse,
+    <br>you can scroll with the keyboard:
+    <br>use the <b>arrow keys</b>,
+    <br>the <b>space bar</b>,
+    <br>or <b>page up</b> and <b>page down</b>.
+  </p>
+  <p class='quiet'>Multiple key presses will skip multiple slides.</p>
+  <a href='geomapping/simple.html'>See examples <i class='icon icon-arrow-right'></i></a> 
+</section>
 
-            <div class='space-bottom1'>
-              <strong class='block quiet small'>Heading</strong>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-            </div>            
+<script src='js/d3.v3.min.js'></script>
+<script src='js/stack.v1.min.js'></script>
+<script>
 
-            <div class='space-bottom1'>
-              <strong class='block quiet small'>Heading</strong>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-            </div>            
-            
-            <div class='space-bottom1'>
-              <strong class='block quiet small'>Tutorials</strong>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-            </div>            
-          </nav>
-        </div>
-      </div>  
-    </div><!-- ./sidenav -->
+var mystack = stack()
+    .on('activate', activate)
+    .on('deactivate', deactivate);
 
-    <div class='container-fluid clearfix'>
-      <div class='pad2y contain col-sm-9 col-sm-offset-3'>
-        <div class='col-sm-12 box round clearfix contain fill-white'>
+var follow = d3.select('#follow');
 
-          <div class='pad2 keyline-bottom'>
-            <h4>A simple choropleth</h4>
-            <p class='prose'>
-              This choropleth encodes unemployment rates from 2008 with a quantize scale ranging from 0 to 15%.
-            </p>
-          </div>
-          <div id='map' class='center'></div>
+function refollow() {
+  follow.style('top', (1 + (1 - mystack.scrollRatio()) / 2 - d3.event.offset) * 100 + '%');
+}
 
-<pre class='prettyprint' id='code'>
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-  &lt;meta charset='UTF-8'/&gt;
-  &lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
-  &lt;style&gt;
-    .counties {
-      fill: none;
-    }
+function activate(d, i) {
+  if (i === 1) mystack.on('scroll.follow', refollow);
+}
 
-    .states {
-      fill: none;
-      stroke: #fff;
-      stroke-linejoin: round;
-    }
+function deactivate(d, i) {
+  if (i === 1) mystack.on('scroll.follow', null);
+}
 
-    .q0-9 { fill:rgb(247,251,255); }
-    .q1-9 { fill:rgb(222,235,247); }
-    .q2-9 { fill:rgb(198,219,239); }
-    .q3-9 { fill:rgb(158,202,225); }
-    .q4-9 { fill:rgb(107,174,214); }
-    .q5-9 { fill:rgb(66,146,198); }
-    .q6-9 { fill:rgb(33,113,181); }
-    .q7-9 { fill:rgb(8,81,156); }
-    .q8-9 { fill:rgb(8,48,107); }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;div id='map'&gt;&lt;/div&gt;
-  &lt;script src='http://d3js.org/d3.v3.min.js'&gt;&lt;/script&gt;
-  &lt;script src='http://d3js.org/queue.v1.min.js'&gt;&lt;/script&gt;
-  &lt;script src='http://d3js.org/topojson.v1.min.js'&gt;&lt;/script&gt;
-  &lt;script&gt;
-    //Width and height
-    var width = 500;
-    var height = 300;
+</script>
 
-    var rateById = d3.map();
-
-    var quantize = d3.scale.quantize()
-        .domain([0, .15])
-        .range(d3.range(9).map(function(i) { return 'q' + i + '-9'; }));
-
-    var projection = d3.geo.albersUsa()
-        .scale(500)
-        .translate([width / 2, height / 2]);
-
-    var path = d3.geo.path()
-        .projection(projection);
-
-    var svg = d3.select('#map').append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    queue()
-        .defer(d3.json, '/data/us.json')
-        .defer(d3.tsv, '/data/unemployment.tsv', function(d) { rateById.set(d.id, +d.rate); })
-        .await(ready);
-
-    function ready(error, us) {
-      svg.append('g')
-          .attr('class', 'counties')
-        .selectAll('path')
-          .data(topojson.feature(us, us.objects.counties).features)
-        .enter().append('path')
-          .attr('class', function(d) { return quantize(rateById.get(d.id)); })
-          .attr('d', path);
-
-      svg.append('path')
-          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
-          .attr('class', 'states')
-          .attr('d', path);
-    }
-
-    d3.select(self.frameElement).style('height', height + 'px');  
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
-</pre>
-
-          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' data-ref-id='code'>
-            <i class='icon icon-clipboard pad0r'></i>Copy example
-          </button>
-        </div>
-
-        <div class='center quiet small pad1y'>Zachary Welch ~ 2014</div>        
-      </div>
-    </div>
-
-  </div><!-- ./content -->
-  
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
-  <script src='http://d3js.org/d3.v3.min.js'></script>
-  <script src='http://d3js.org/queue.v1.min.js'></script>
-  <script src='http://d3js.org/topojson.v1.min.js'></script>
-  <script src='js/prettify.js'></script>
-  <script src='js/ZeroClipboard.min.js'></script>
-  <script src='js/site.js'></script>
-  <script src='js/simple.js'></script>
 </body>
 </html>
