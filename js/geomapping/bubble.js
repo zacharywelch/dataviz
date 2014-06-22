@@ -44,9 +44,7 @@
          .attr('r', function(d) {
           return Math.sqrt(parseInt(d.population) * 0.00004);
          })
-         .style('fill', '#3887be')
-         .style('stroke', 'none')
-         .style('opacity', 0.8)
+         .attr('class', 'bubble')
     });
 
   });

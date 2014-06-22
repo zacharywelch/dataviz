@@ -39,7 +39,7 @@
 
   // reposition tooltip near state
   function position(datum) {
-    tooltip.style('top', (event.pageY-10)+'px').style('left',(event.pageX+10)+'px')
+    tooltip.style('top', (event.pageY+25)+'px').style('left',(event.pageX-80)+'px')
   }
 
   // hide tooltip

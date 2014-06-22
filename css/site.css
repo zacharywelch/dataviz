@@ -88,6 +88,12 @@ body { padding-top: 60px; }
   pointer-events: all;
 }
 .outline .zoom + g path { cursor: pointer; }
+.bubble {
+  fill: #3887be;
+  stroke: none;
+  opacity: 0.8;
+}
+.bubble:hover { fill: #3bb2d0; }
 
 /* Quantized scale */
 .q0-9 { fill:rgb(247,251,255); }
