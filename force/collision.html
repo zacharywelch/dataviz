@@ -4,7 +4,7 @@
   <meta charset='UTF-8'/>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
-  <title>US counties</title>
+  <title>Data Visualization</title>
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
@@ -40,7 +40,7 @@
             <div class='space-bottom1'>
               <strong class='block quiet small'>Geomapping</strong>
               <a href='/geomapping/simple.html' class='block small truncate'>A simple map</a>
-              <a href='/geomapping/counties.html' class='block small truncate active'>US counties TopoJSON</a>
+              <a href='/geomapping/counties.html' class='block small truncate'>US counties TopoJSON</a>
               <a href='/geomapping/zoom.html' class='block small truncate'>Click to zoom</a>
               <a href='/geomapping/zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
               <a href='/geomapping/tooltip.html' class='block small truncate'>Adding tooltips on hover</a>
@@ -67,11 +67,11 @@
             
             <div class='space-bottom1'>
               <strong class='block quiet small'>Force layouts</strong>
-              <a href='/force/collision.html' class='block small truncate'>Collision detection</a>
+              <a href='/force/collision.html' class='block small truncate active'>Collision detection</a>
               <a href='/force/tree.html' class='block small truncate'>Visualizing Corp Apps Infrastructure</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-            </div>            
+            </div>                     
           </nav>
         </div>
       </div>  
@@ -82,63 +82,103 @@
         <div class='col-sm-12 box round clearfix contain fill-white'>
 
           <div class='pad2 keyline-bottom'>
-            <h4>US Counties TopoJSON</h4>
+            <h4>Use the force, Luke!</h4>
             <p class='prose'>
-              TopoJSON can be used to show US counties as well as <a href='simple.html'>states</a>.
+              This example shows how to add <a href='http://bl.ocks.org/mbostock/3231298'>collision detection</a> to a D3.js <a href='https://github.com/mbostock/d3/wiki/Force-Layout'>force layout</a>. Colors are based on an ordinal scale and use the <a href='http://ec2-107-20-179-100.compute-1.amazonaws.com/'>CB style guide</a> palette.
             </p>
           </div>
-          <div id='map' class='center'></div>
+          <div id='viz' class='center'></div>
 
 <pre class='prettyprint' id='code'>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;meta charset='UTF-8'/&gt;
-&lt;style&gt;
-  .outline {
-    fill: #bfbfbf;
-    stroke: #fff;
-    stroke-linejoin: round;
-  }
-&lt;/style&gt;
+&lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
-&lt;div id='map'&gt;&lt;/div&gt;
+&lt;div id='viz'&gt;&lt;/div&gt;
 &lt;script src='http://d3js.org/d3.v3.min.js'&gt;&lt;/script&gt;
-&lt;script src='http://d3js.org/topojson.v1.min.js'&gt;&lt;/script&gt;
 &lt;script&gt;
-  // define width and height of map
-  var w = 500
-  var h = 300
+  // define width and height of canvas
+  var w = 590
+  var h = 390
+  
+  var nodes = d3.range(200).map(function() { return {radius: Math.random() * 12 + 4}; })
+  var root = nodes[0]
+  var color = d3.scale.ordinal().range(['#3887be', '#56b881', '#EE6565'])
 
-  // define albers usa projection
-  var projection = d3.geo.albersUsa()
-                     .translate([w/2, h/2])
-                     .scale(500)
+  root.radius = 0;
+  root.fixed = true;
 
-  // tell path to use our defined projection
-  var path = d3.geo.path().projection(projection)
+  var force = d3.layout.force()
+      .gravity(0.05)
+      .charge(function(d, i) { return i ? 0 : -2000; })
+      .nodes(nodes)
+      .size([w, h])
 
-  // load TopoJSON data 
-  d3.json('/data/geomapping/us.json', function(error, us) {
-    d3.select('#map')
-      .append('svg')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('class', 'outline')
-      .append('path')
-      .datum(topojson.feature(us, us.objects.counties))
-      .attr('d', path)
+  force.start()
+
+  var svg = d3.select('#viz')
+              .append('svg')
+              .attr('width', w)
+              .attr('height', h)
+
+  svg.selectAll('circle')
+     .data(nodes.slice(1))
+     .enter()
+     .append('circle')
+     .attr('r', function(d) { return d.radius; })
+     .style('fill', function(d, i) { return color(i % 3); });
+
+  force.on('tick', function(e) {
+    var q = d3.geom.quadtree(nodes),
+        i = 0,
+        n = nodes.length
+
+    while (++i &lt; n) q.visit(collide(nodes[i]))
+
+    svg.selectAll('circle')
+       .attr('cx', function(d) { return d.x; })
+       .attr('cy', function(d) { return d.y; })
   });
-&lt;/script&gt;
 
+  svg.on('mousemove', function() {
+    var p1 = d3.mouse(this)
+    root.px = p1[0]
+    root.py = p1[1]
+    force.resume()
+  });
+
+  function collide(node) {
+    var r = node.radius + 16,
+        nx1 = node.x - r,
+        nx2 = node.x + r,
+        ny1 = node.y - r,
+        ny2 = node.y + r
+    return function(quad, x1, y1, x2, y2) {
+      if (quad.point &amp;&amp; (quad.point !== node)) {
+        var x = node.x - quad.point.x,
+            y = node.y - quad.point.y,
+            l = Math.sqrt(x * x + y * y),
+            r = node.radius + quad.point.radius
+        if (l &lt; r) {
+          l = (l - r) / l * .5
+          node.x -= x *= l
+          node.y -= y *= l
+          quad.point.x += x
+          quad.point.y += y
+        }
+      }
+      return x1 &gt; nx2 || x2 &lt; nx1 || y1 &gt; ny2 || y2 &lt; ny1
+    };
+  }
+&lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-          
-          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' 
-                  data-ref-id='code'>
+
+          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' data-ref-id='code'>
             <i class='icon icon-clipboard pad0r'></i>Copy example
           </button>
         </div>
@@ -148,13 +188,12 @@
     </div>
 
   </div><!-- ./content -->
-  
+
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
   <script src='http://d3js.org/d3.v3.min.js'></script>
-  <script src='http://d3js.org/topojson.v1.min.js'></script>
   <script src='../js/prettify.js'></script>
   <script src='../js/zeroclipboard/ZeroClipboard.min.js'></script>
   <script src='../js/site.js'></script>
-  <script src='../js/geomapping/counties.js'></script>
+  <script src='../js/force/collision.js'></script>
 </body>
 </html>

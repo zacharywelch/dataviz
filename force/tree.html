@@ -4,10 +4,18 @@
   <meta charset='UTF-8'/>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
-  <title>US counties</title>
+  <title>Data Visualization</title>
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
+  <style>
+    .edge { stroke: #ccc; }
+
+    .node text {
+      pointer-events: none;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body class='fill-light requests'>
   <div class='navbar fill-white keyline-bottom col-sm-12 animate clearfix'>
@@ -40,7 +48,7 @@
             <div class='space-bottom1'>
               <strong class='block quiet small'>Geomapping</strong>
               <a href='/geomapping/simple.html' class='block small truncate'>A simple map</a>
-              <a href='/geomapping/counties.html' class='block small truncate active'>US counties TopoJSON</a>
+              <a href='/geomapping/counties.html' class='block small truncate'>US counties TopoJSON</a>
               <a href='/geomapping/zoom.html' class='block small truncate'>Click to zoom</a>
               <a href='/geomapping/zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
               <a href='/geomapping/tooltip.html' class='block small truncate'>Adding tooltips on hover</a>
@@ -68,7 +76,7 @@
             <div class='space-bottom1'>
               <strong class='block quiet small'>Force layouts</strong>
               <a href='/force/collision.html' class='block small truncate'>Collision detection</a>
-              <a href='/force/tree.html' class='block small truncate'>Visualizing Corp Apps Infrastructure</a>
+              <a href='/force/tree.html' class='block small truncate active'>Visualizing Corp Apps Infrastructure</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
             </div>            
@@ -82,63 +90,83 @@
         <div class='col-sm-12 box round clearfix contain fill-white'>
 
           <div class='pad2 keyline-bottom'>
-            <h4>US Counties TopoJSON</h4>
+            <h4>Visualizing Corp Apps Infrastructure</h4>
             <p class='prose'>
-              TopoJSON can be used to show US counties as well as <a href='simple.html'>states</a>.
+              This example shows how to build an organizational tree using a D3.js force-directed graph. Github avatars with accompanying labels are used as nodes.
             </p>
           </div>
-          <div id='map' class='center'></div>
+          <div id='viz' class='center'></div>
 
 <pre class='prettyprint' id='code'>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
 &lt;meta charset='UTF-8'/&gt;
-&lt;style&gt;
-  .outline {
-    fill: #bfbfbf;
-    stroke: #fff;
-    stroke-linejoin: round;
-  }
-&lt;/style&gt;
+&lt;meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /&gt;
 &lt;/head&gt;
 &lt;body&gt;
-
-&lt;div id='map'&gt;&lt;/div&gt;
+&lt;div id='viz'&gt;&lt;/div&gt;
 &lt;script src='http://d3js.org/d3.v3.min.js'&gt;&lt;/script&gt;
-&lt;script src='http://d3js.org/topojson.v1.min.js'&gt;&lt;/script&gt;
 &lt;script&gt;
-  // define width and height of map
-  var w = 500
-  var h = 300
+  var width = 590,
+      height = 480
 
-  // define albers usa projection
-  var projection = d3.geo.albersUsa()
-                     .translate([w/2, h/2])
-                     .scale(500)
+  var svg = d3.select('#viz').append('svg')
+      .attr('width', width)
+      .attr('height', height);
 
-  // tell path to use our defined projection
-  var path = d3.geo.path().projection(projection)
+  var force = d3.layout.force()
+      .gravity(.05)
+      .distance(100)
+      .charge(-375)
+      .size([width, height]);
 
-  // load TopoJSON data 
-  d3.json('/data/geomapping/us.json', function(error, us) {
-    d3.select('#map')
-      .append('svg')
-      .attr('width', w)
-      .attr('height', h)
-      .attr('class', 'outline')
-      .append('path')
-      .datum(topojson.feature(us, us.objects.counties))
-      .attr('d', path)
+  d3.json('/data/force/tree.json', function(error, json) {
+    force
+        .nodes(json.nodes)
+        .links(json.edges)
+        .start();
+
+    var edge = svg.selectAll('.edge')
+                  .data(json.edges)
+                  .enter()
+                  .append('line')
+                  .attr('class', 'edge')
+
+    var node = svg.selectAll('.node')
+                  .data(json.nodes)
+                  .enter()
+                  .append('g')
+                  .attr('class', 'node')
+                  .call(force.drag)
+
+    node.append('image')
+        .attr('xlink:href', 'https://github.com/favicon.ico')
+        .attr('x', -8)
+        .attr('y', -8)
+        .attr('width', 16)
+        .attr('height', 16)
+
+    node.append('text')
+        .attr('dx', 12)
+        .attr('dy', '.35em')
+        .text(function(d) { return d.name })
+
+    force.on('tick', function() {
+      edge.attr('x1', function(d) { return d.source.x; })
+          .attr('y1', function(d) { return d.source.y; })
+          .attr('x2', function(d) { return d.target.x; })
+          .attr('y2', function(d) { return d.target.y; })
+
+      node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; })
+    });
   });
 &lt;/script&gt;
-
 &lt;/body&gt;
 &lt;/html&gt;
 </pre>
-          
-          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' 
-                  data-ref-id='code'>
+
+          <button id='copy' class='btn btn-primary btn-block round-bottom js-clipboard' data-ref-id='code'>
             <i class='icon icon-clipboard pad0r'></i>Copy example
           </button>
         </div>
@@ -148,13 +176,12 @@
     </div>
 
   </div><!-- ./content -->
-  
+
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
   <script src='http://d3js.org/d3.v3.min.js'></script>
-  <script src='http://d3js.org/topojson.v1.min.js'></script>
   <script src='../js/prettify.js'></script>
   <script src='../js/zeroclipboard/ZeroClipboard.min.js'></script>
   <script src='../js/site.js'></script>
-  <script src='../js/geomapping/counties.js'></script>
+  <script src='../js/force/tree.js'></script>
 </body>
 </html>

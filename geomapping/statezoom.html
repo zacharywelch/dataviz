@@ -39,14 +39,14 @@
 
             <div class='space-bottom1'>
               <strong class='block quiet small'>Geomapping</strong>
-              <a href='simple.html' class='block small truncate'>A simple map</a>
-              <a href='counties.html' class='block small truncate'>US counties TopoJSON</a>
-              <a href='zoom.html' class='block small truncate'>Click to zoom</a>
-              <a href='zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
-              <a href='tooltip.html' class='block small truncate'>Adding tooltips on hover</a>
-              <a href='bubble.html' class='block small truncate'>Creating a bubble map</a>
-              <a href='choropleth.html' class='block small truncate'>Creating a choropleth</a>
-              <a href='statezoom.html' class='block small truncate active'>Adding a county-level zoom</a>
+              <a href='/geomapping/simple.html' class='block small truncate'>A simple map</a>
+              <a href='/geomapping/counties.html' class='block small truncate'>US counties TopoJSON</a>
+              <a href='/geomapping/zoom.html' class='block small truncate'>Click to zoom</a>
+              <a href='/geomapping/zoomtransitions.html' class='block small truncate'>Zoom transitions with panning</a>
+              <a href='/geomapping/tooltip.html' class='block small truncate'>Adding tooltips on hover</a>
+              <a href='/geomapping/bubble.html' class='block small truncate'>Creating a bubble map</a>
+              <a href='/geomapping/choropleth.html' class='block small truncate'>Creating a choropleth</a>
+              <a href='/geomapping/statezoom.html' class='block small truncate active'>Adding a county-level zoom</a>
             </div>
 
             <div class='space-bottom1'>
@@ -66,9 +66,9 @@
             </div>            
             
             <div class='space-bottom1'>
-              <strong class='block quiet small'>Tutorials</strong>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
-              <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
+              <strong class='block quiet small'>Force layouts</strong>
+              <a href='/force/collision.html' class='block small truncate'>Collision detection</a>
+              <a href='/force/tree.html' class='block small truncate'>Visualizing Corp Apps Infrastructure</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
               <a href='#fakelink' class='block small truncate'>Lorem ipsum dolor sit amet</a>
             </div>            
@@ -84,10 +84,10 @@
           <div class='pad2 keyline-bottom'>
             <h4>Adding a county-level zoom</h4>
             <p class='prose'>
-              This variation of <a href='zoomtransitions.html'>zoom transitions</a> adds county TopoJSON when a state is clicked. County TopoJSON is based on US Census Bureau <a href='https://github.com/mbostock/us-atlas'>shapefiles</a> that were first manipulated using <a href='http://www.gdal.org/ogr2ogr.html'>ogr2ogr</a> before finally being converted to TopoJSON.
+              This variation of <a href='zoomtransitions.html'>zoom transitions</a> dynamically adds county boundaries when a state is clicked. 
             </p>
-            <p class='prose'> 
-              This example also joins state geometries with a <a href='https://gist.github.com/mbostock/4090846'>TSV file</a> of abbreviations and names using the <code>-e</code> argument of <code>topojson</code>.
+            <p class='prose'>
+              State and county geometries are <a href='https://github.com/mbostock/topojson/wiki/Command-Line-Reference#external-properties'>joined</a> with <a href='https://gist.github.com/mbostock/4090846'>TSV files</a> containing state and county names along with the counties for each state, simplifying the implementation and eliminating the need to load multiple data files. 
             </p>
           </div>
           <div id='map' class='center'></div>
@@ -116,6 +116,7 @@
   var w      = 500
   var h      = 300
   var active = d3.select(null)
+  var us     = null
 
   // define albers usa projection
   var projection = d3.geo.albersUsa()
@@ -154,7 +155,8 @@
      .call(zoom.event)
 
   // load TopoJSON data 
-  d3.json('/data/geomapping/us-states.json', function(error, us) {
+  d3.json('/data/geomapping/us-joined.json', function(error, data) {
+    us = data
     g.selectAll('path')
      .data(topojson.feature(us, us.objects.states).features)
      .enter()
@@ -169,33 +171,34 @@
     if (active.node() === this) return reset()
     active = d3.select(this)
     
+    state_fips = d.id
+
     // load county TopoJSON data for state
-    filename = '/data/geomapping/states/' + d.properties.code.toLowerCase() + '.json'
-    d3.json(filename, function(error, json) {
-      g.append('g')
-       .attr('id', 'counties')
-       .selectAll('path')
-       .data(topojson.feature(json, json.objects.counties).features)
-       .enter()
-       .append('path')
-       .attr('id', function(d) { return d.id })
-       .attr('d', path)
-       .on('click', function(d) { return reset() })
+    g.append('g')
+     .attr('id', 'counties')
+     .selectAll('path')
+     .data(topojson.feature(us, us.objects.counties).features.filter(function(d) {
+      return state_fips == d.properties.state
+     }))
+     .enter()
+     .append('path')
+     .attr('id', function(d) { return d.id })
+     .attr('d', path)
+     .on('click', function(d) { return reset() })
 
-      // get center of bounding box and scale to 90%
-      var bounds = path.bounds(d),
-          dx = bounds[1][0] - bounds[0][0],
-          dy = bounds[1][1] - bounds[0][1],
-          x = (bounds[0][0] + bounds[1][0]) / 2,
-          y = (bounds[0][1] + bounds[1][1]) / 2,
-          scale = .9 / Math.max(dx / w, dy / h),
-          translate = [w / 2 - scale * x, h / 2 - scale * y]
+    // get center of bounding box and scale to 90%
+    var bounds = path.bounds(d),
+        dx = bounds[1][0] - bounds[0][0],
+        dy = bounds[1][1] - bounds[0][1],
+        x = (bounds[0][0] + bounds[1][0]) / 2,
+        y = (bounds[0][1] + bounds[1][1]) / 2,
+        scale = .9 / Math.max(dx / w, dy / h),
+        translate = [w / 2 - scale * x, h / 2 - scale * y]
 
-      // zoom and scale to bounding box
-      svg.transition()
-         .duration(750)
-         .call(zoom.translate(translate).scale(scale).event)      
-    });
+    // zoom and scale to bounding box
+    svg.transition()
+       .duration(750)
+       .call(zoom.translate(translate).scale(scale).event)      
   }
 
   // Reset scale and zoom on map

@@ -3,6 +3,7 @@
   var w      = 500
   var h      = 300
   var active = d3.select(null)
+  var us     = null
 
   // define albers usa projection
   var projection = d3.geo.albersUsa()
@@ -41,7 +42,8 @@
      .call(zoom.event)
 
   // load TopoJSON data 
-  d3.json('/data/geomapping/us-states.json', function(error, us) {
+  d3.json('/data/geomapping/us-joined.json', function(error, data) {
+    us = data
     g.selectAll('path')
      .data(topojson.feature(us, us.objects.states).features)
      .enter()
@@ -56,33 +58,34 @@
     if (active.node() === this) return reset()
     active = d3.select(this)
     
+    state_fips = d.id
+
     // load county TopoJSON data for state
-    filename = '/data/geomapping/states/' + d.properties.code.toLowerCase() + '.json'
-    d3.json(filename, function(error, json) {
-      g.append('g')
-       .attr('id', 'counties')
-       .selectAll('path')
-       .data(topojson.feature(json, json.objects.counties).features)
-       .enter()
-       .append('path')
-       .attr('id', function(d) { return d.id })
-       .attr('d', path)
-       .on('click', function(d) { return reset() })
+    g.append('g')
+     .attr('id', 'counties')
+     .selectAll('path')
+     .data(topojson.feature(us, us.objects.counties).features.filter(function(d) {
+      return state_fips == d.properties.state
+     }))
+     .enter()
+     .append('path')
+     .attr('id', function(d) { return d.id })
+     .attr('d', path)
+     .on('click', function(d) { return reset() })
 
-      // get center of bounding box and scale to 90%
-      var bounds = path.bounds(d),
-          dx = bounds[1][0] - bounds[0][0],
-          dy = bounds[1][1] - bounds[0][1],
-          x = (bounds[0][0] + bounds[1][0]) / 2,
-          y = (bounds[0][1] + bounds[1][1]) / 2,
-          scale = .9 / Math.max(dx / w, dy / h),
-          translate = [w / 2 - scale * x, h / 2 - scale * y]
+    // get center of bounding box and scale to 90%
+    var bounds = path.bounds(d),
+        dx = bounds[1][0] - bounds[0][0],
+        dy = bounds[1][1] - bounds[0][1],
+        x = (bounds[0][0] + bounds[1][0]) / 2,
+        y = (bounds[0][1] + bounds[1][1]) / 2,
+        scale = .9 / Math.max(dx / w, dy / h),
+        translate = [w / 2 - scale * x, h / 2 - scale * y]
 
-      // zoom and scale to bounding box
-      svg.transition()
-         .duration(750)
-         .call(zoom.translate(translate).scale(scale).event)      
-    });
+    // zoom and scale to bounding box
+    svg.transition()
+       .duration(750)
+       .call(zoom.translate(translate).scale(scale).event)      
   }
 
   // Reset scale and zoom on map
