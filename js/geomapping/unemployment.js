@@ -24,6 +24,9 @@
                .scaleExtent([1, 8])
                .on('zoom', zoomed)
 
+  // grab tooltip
+  var tooltip = d3.select('#tooltip')
+
   // create svg up front
   var svg = d3.select('#map')
               .append('svg')
@@ -56,6 +59,9 @@
      .attr('class', function(d) { return quantize(d.properties.rate); })
      .attr('d', path)
      .on('click', clicked)
+     .on('mouseover', hovered)
+     .on('mousemove', position)
+     .on('mouseout', hide)     
   });
 
   function clicked(d) {    
@@ -78,6 +84,9 @@
      .attr('class', function(d) { return quantize(d.properties.rate); })
      .attr('d', path)
      .on('click', function(d) { return reset() })
+     .on('mouseover', hovered)
+     .on('mousemove', position)
+     .on('mouseout', hide)
 
     // get center of bounding box and scale to 90%
     var bounds = path.bounds(d),
@@ -113,6 +122,25 @@
   // also stop propagation so we don’t click-to-zoom.
   function stopped() {
     if (d3.event.defaultPrevented) d3.event.stopPropagation()
+  }
+
+  // show tooltip with state FIPS code
+  function hovered(datum) {
+    tooltip.classed('hidden', false)
+           .select('h4')
+           .text(datum.properties.name)
+    tooltip.select('val')
+           .text(parseFloat((datum.properties.rate * 100)).toFixed(2) + '%')
+  }
+
+  // reposition tooltip near state
+  function position(datum) {
+    tooltip.style('top', (event.pageY+25)+'px').style('left',(event.pageX-80)+'px')
+  }
+
+  // hide tooltip
+  function hide(datum) {
+    tooltip.classed('hidden', true)
   }
 })(jQuery);
 

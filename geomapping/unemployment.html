@@ -8,6 +8,17 @@
   <link href='../css/prettify.css' rel='stylesheet' />
   <link href='../framework/css/cb-design-framework.min.css' rel='stylesheet' />
   <link href='../css/site.css' rel='stylesheet' />
+  <style>
+    #tooltip {
+      position: absolute;
+      width: 125px;
+      height: auto;
+      pointer-events: none;
+    }
+    #counties path:hover {
+      fill: #FB896B;
+    }
+  </style>
 </head>
 <body class='fill-light requests'>
   <div class='navbar fill-white keyline-bottom col-sm-12 animate clearfix'>
@@ -105,6 +116,21 @@
     stroke: #fff;
     stroke-linejoin: round;
   }
+  .zoom {
+    fill: none;
+    pointer-events: all;
+  }
+  .outline .zoom + g path { cursor: pointer; }
+  /* Quantized scale */
+  .q0-9 { fill:rgb(247,251,255); }
+  .q1-9 { fill:rgb(222,235,247); }
+  .q2-9 { fill:rgb(198,219,239); }
+  .q3-9 { fill:rgb(158,202,225); }
+  .q4-9 { fill:rgb(107,174,214); }
+  .q5-9 { fill:rgb(66,146,198); }
+  .q6-9 { fill:rgb(33,113,181); }
+  .q7-9 { fill:rgb(8,81,156); }
+  .q8-9 { fill:rgb(8,48,107); }  
 &lt;/style&gt;
 &lt;/head&gt;
 &lt;body&gt;
@@ -118,6 +144,10 @@
   var h      = 300
   var active = d3.select(null)
   var us     = null
+
+  var quantize = d3.scale.quantize()
+      .domain([0, .15])
+      .range(d3.range(9).map(function(i) { return 'q' + i + '-9'; }));
 
   // define albers usa projection
   var projection = d3.geo.albersUsa()
@@ -133,6 +163,9 @@
                .scale(1)
                .scaleExtent([1, 8])
                .on('zoom', zoomed)
+
+  // grab tooltip
+  var tooltip = d3.select('#tooltip')
 
   // create svg up front
   var svg = d3.select('#map')
@@ -156,15 +189,19 @@
      .call(zoom.event)
 
   // load TopoJSON data 
-  d3.json('/data/geomapping/us-joined.json', function(error, data) {
+  d3.json('/data/geomapping/unemployment.json', function(error, data) {
     us = data
     g.selectAll('path')
      .data(topojson.feature(us, us.objects.states).features)
      .enter()
      .append('path')
      .attr('id', function(d) { return d.id })
+     .attr('class', function(d) { return quantize(d.properties.rate); })
      .attr('d', path)
      .on('click', clicked)
+     .on('mouseover', hovered)
+     .on('mousemove', position)
+     .on('mouseout', hide)     
   });
 
   function clicked(d) {    
@@ -184,8 +221,12 @@
      .enter()
      .append('path')
      .attr('id', function(d) { return d.id })
+     .attr('class', function(d) { return quantize(d.properties.rate); })
      .attr('d', path)
      .on('click', function(d) { return reset() })
+     .on('mouseover', hovered)
+     .on('mousemove', position)
+     .on('mouseout', hide)
 
     // get center of bounding box and scale to 90%
     var bounds = path.bounds(d),
@@ -222,6 +263,25 @@
   function stopped() {
     if (d3.event.defaultPrevented) d3.event.stopPropagation()
   }
+
+  // show tooltip with state FIPS code
+  function hovered(datum) {
+    tooltip.classed('hidden', false)
+           .select('h4')
+           .text(datum.properties.name)
+    tooltip.select('val')
+           .text(parseFloat((datum.properties.rate * 100)).toFixed(2) + '%')
+  }
+
+  // reposition tooltip near state
+  function position(datum) {
+    tooltip.style('top', (event.pageY+25)+'px').style('left',(event.pageX-80)+'px')
+  }
+
+  // hide tooltip
+  function hide(datum) {
+    tooltip.classed('hidden', true)
+  }
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -237,6 +297,11 @@
     </div>
 
   </div><!-- ./content -->
+
+  <div id='tooltip' class='fill-denim dark keyline-all center small pad2 hidden'>
+    <h4>A simple tooltip</h4>
+    <val>n/a</val>
+  </div>  
 
   <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' ></script>
   <script src='http://d3js.org/d3.v3.min.js'></script>
