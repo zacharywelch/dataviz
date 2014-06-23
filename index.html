@@ -6,6 +6,7 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>  
   <title>CB Hackathon 2014</title>
   <link href='framework/css/cb-design-framework.min.css' rel='stylesheet' />
+  <link href='css/animations.css' rel='stylesheet' />
   <style>
 
   @import url(http://fonts.googleapis.com/css?family=PT+Serif|PT+Serif:b|PT+Serif:i);
@@ -17,8 +18,14 @@
     font-family: 'PT Serif', Baskerville, Georgia;
   }
   h1 { font-size: 120%; }
+  .copyright {  
+    font-size: 22px;
+    line-height:  30px;
+    text-transform: lowercase;  
+  }
   .small { font-size: 80%; }
   .micro { font-size: 65%; }
+  .d3 { background: #28353d url(img/d3.png) no-repeat 50% 50%; }
   </style>
 </head>
 <body>
@@ -27,23 +34,62 @@
   <h1>
     Data Journalism <span class='quiet'>&amp;</span> D3.js
   </h1>
-  <p class='quiet'>Scroll down to continue.
+  <p class='quiet'>Scroll down to continue.</p>
+  <div class='pin-bottom pad4 copyright floating quiet'>
+    <img src='img/zac.jpeg' class='img-circle'>zachary welch
+  </div>
 </section>
 
-<section>
-  We're experiencing an explosion of online mapping.
+<section style='padding:5em 10em;' class='center'>
+  <div class='space-bottom4'>
+    <h1 class='space-bottom1'>Online Journalism Awards</h1>
+    <h2 class='small quiet'>2013</h2> 
+  </div>
+  <div class='col-sm-6 col-sm-offset-3'>
+    <img src='img/gannett.jpg' class='col-sm-12 round space-bottom'>
+    <img src='img/knight.jpg' class='col-sm-12 round'>
+  </div>
 </section>
 
-<section style='padding:5em 9em;'>
+<section class='center' style='padding:5em 9em;'>
+  <div>
+    <h1 class='space-bottom1'>The NSA Files</h1>
+    <h2 class='small quiet'>The Guardian</h2> 
+  </div>
+  <div class='tossing pad4'>
+    <img src='img/snowden.png' class='img-circle' width='150'> 
+  </div>
+</section>
+
+<section class='center' style='padding:5em 9em;'>
+  <div>
+    <h1 class='space-bottom1'>Triumph, Then Tragedy</h1>
+    <h2 class='small quiet'>Boston Globe</h2> 
+  </div>
+  <div class='pad4'>
+    <img src='img/boston.png' width='300' class='round'> 
+  </div>
+</section>
+
+<section class='center' style='padding:5em 9em;'>
   <p>
-    In addition to the mouse,
-    <br>you can scroll with the keyboard:
-    <br>use the <b>arrow keys</b>,
-    <br>the <b>space bar</b>,
-    <br>or <b>page up</b> and <b>page down</b>.
+    <h1 class='space-bottom1'>D3.js</h1>
+    <h2 class='small quiet'>The New York Times</h2> 
   </p>
-  <p class='quiet'>Multiple key presses will skip multiple slides.</p>
-  <a href='force/collision.html'>See examples <i class='icon icon-arrow-right'></i></a> 
+  <div class='bigEntrance'>
+    <img src='img/bostock.jpeg' class='img-circle space-bottom2' width='300'> 
+    <p>Hi, I'm Mike Bostock!</p>
+  </div>
+</section>
+
+<section class='center' style='padding:5em 9em;'>  
+  <p>D3.js</p>
+  <img src='img/d3.png' class='space-bottom'>
+  <p>
+    <a href='/force/collision.html' class='block'>
+      See examples <i class='icon icon-arrow-right'></i>
+    </a>
+  </p>
 </section>
 
 <script src='js/d3.v3.min.js'></script>
